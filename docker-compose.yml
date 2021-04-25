@@ -1,0 +1,29 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  ui:
+    build: .
+    volumes:
+      - ./ui/src:/ui/src 
+    ports:
+      - "3000:3000"
+
+  api:
+    build: ./api
+    volumes:
+      - ./api:/go/src/github.com/badis/hackathon
+    ports:
+      - "5000:5000"
+    links:
+      - db
+
+  db:
+    build: ./db
+    volumes:
+      - ./db/pgdata:/pgdata
+    ports:
+      - "5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=0000
+      - PGDATA=/pgdata
+
