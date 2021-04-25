@@ -1,9 +1,12 @@
 version: "3.9"  # optional since v1.27.0
 services:
   ui:
-    build: .
+    build: ./ui
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
     volumes:
-      - ./ui/src:/ui/src 
+      - ./ui:/usr/src
+      - ui_node_modules:/ui/node_modules
     ports:
       - "3000:3000"
 
@@ -19,11 +22,21 @@ services:
   db:
     build: ./db
     volumes:
-      - ./db/pgdata:/pgdata
+      - db_pgdata:/var/lib/postgresql/data
     ports:
       - "5432"
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=0000
-      - PGDATA=/pgdata
+      - PGDATA=/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8000:8080
+
+volumes:
+  ui_node_modules:
+  db_pgdata:
 
