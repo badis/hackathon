@@ -2,6 +2,7 @@ version: "3.9"  # optional since v1.27.0
 services:
   ui:
     build: ./ui
+    container_name: frontend
     environment:
       CHOKIDAR_USEPOLLING: "true"
     volumes:
@@ -12,6 +13,7 @@ services:
 
   api:
     build: ./api
+    container_name: backend
     volumes:
       - ./api:/go/src/github.com/badis/hackathon
     ports:
@@ -21,20 +23,28 @@ services:
 
   db:
     build: ./db
+    container_name: database
     volumes:
       - db_pgdata:/var/lib/postgresql/data
     ports:
       - "5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "admin" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
     environment:
       - POSTGRES_USER=admin
+      - POSTGRES_DB=hackathon_db
       - POSTGRES_PASSWORD=0000
       - PGDATA=/var/lib/postgresql/data
 
   adminer:
     image: adminer
+    container_name: adminer
     restart: always
     ports:
-      - 8000:8080
+      - 8080:8080
 
 volumes:
   ui_node_modules:
