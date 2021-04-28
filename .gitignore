@@ -10,6 +10,7 @@ db/pgdata
 # production
 ui/build
 api/tmp
+api/hackathon
 
 # misc
 npm-debug.log*

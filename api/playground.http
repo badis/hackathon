@@ -1,0 +1,23 @@
+
+@host=http://localhost:5000
+
+###
+POST {{host}}/patients
+Content-Type: application/json
+
+{
+    "firstname": "Badis",
+    "lastname": "Merabet",
+    "email": "badis@turing.com"
+}
+
+###
+POST {{host}}/login
+Content-Type: application/json
+
+{
+    "email": "badis@turing.com"
+}
+
+
+

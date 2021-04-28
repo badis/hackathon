@@ -16,6 +16,7 @@ services:
     container_name: backend
     volumes:
       - ./api:/go/src/github.com/badis/hackathon
+      - go_modules:/go/pkg/mod
     ports:
       - "5000:5000"
     links:
@@ -48,5 +49,6 @@ services:
 
 volumes:
   ui_node_modules:
+  go_modules:
   db_pgdata:
 

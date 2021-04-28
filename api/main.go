@@ -1,26 +1,46 @@
 package main
 
 import (
-    "fmt"
-    "net/http"
+	"database/sql"
+	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/badis/hackathon/internal/handler"
+	"github.com/badis/hackathon/internal/service"
+	"github.com/hako/branca"
+
+	_ "github.com/jackc/pgx/stdlib"
 )
 
-func root(w http.ResponseWriter, req *http.Request) {
-    fmt.Fprintf(w, "API works!\n")
-}
-
-func headers(w http.ResponseWriter, req *http.Request) {
-
-    for name, headers := range req.Header {
-        for _, h := range headers {
-            fmt.Fprintf(w, "%v: %v\n", name, h)
-        }
-    }
-}
+const (
+	databaseURL = "postgresql://admin:0000@database:5432/hackathon_db?sslmode=disable"
+	port        = 5000
+)
 
 func main() {
+	db, err := sql.Open("pgx", databaseURL)
+	if err != nil {
+		log.Fatalf("could not open db connection: %v\n", err)
+		return
+	}
 
-    http.HandleFunc("/", root)
-    http.HandleFunc("/headers", headers)
-    http.ListenAndServe(":5000", nil)
+	defer db.Close()
+
+	if err = db.Ping(); err != nil {
+		log.Fatalf("could not ping to db : %v\n", err)
+		return
+	}
+
+	codec := branca.NewBranca("supersecretkeysupersecretkeysupe")
+
+	s := service.New(db, codec)
+
+	h := handler.New(s)
+
+	log.Printf("accepting connections on port: %d\n", port)
+
+	if err = http.ListenAndServe(fmt.Sprintf(":%d", port), h); err != nil {
+		log.Fatalf("could not start server: %v\n", err)
+	}
 }

@@ -1,9 +1,13 @@
-FROM golang:1.16-alpine
+FROM golang:1.16-alpine as builder
 
 WORKDIR /go/src/github.com/badis/hackathon
-COPY . .
 
-RUN go get -d -v ./...
+ENV CGO_ENABLED=0
+COPY go.* ./
+RUN go mod download
+COPY . .
 RUN go install -v ./...
 
-CMD ["hackathon"]
+FROM scratch  
+COPY --from=builder /go/bin/hackathon /go/bin/hackathon
+ENTRYPOINT ["/go/bin/hackathon"]
