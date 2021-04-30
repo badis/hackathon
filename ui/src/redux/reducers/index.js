@@ -1,4 +1,11 @@
-import { combineReducers } from 'redux';
-import patients from './patients';
+import { combineReducers } from "redux";
+import { reducer as formReducer } from "redux-form";
 
-export default combineReducers({ patients });
+import patientReducer from "./patient";
+
+const rootReducer = combineReducers({
+  form: formReducer,
+  patient: patientReducer,
+});
+
+export default rootReducer;
