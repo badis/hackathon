@@ -4,6 +4,7 @@ import (
 	"regexp"
 
 	"github.com/jackc/pgx"
+	"github.com/lib/pq"
 )
 
 var (
@@ -19,4 +20,11 @@ var (
 func IsUniqueViolation(err error) bool {
 	pgerr, ok := err.(pgx.PgError)
 	return ok && pgerr.Code == "23505"
+}
+
+// IsForeignKeyViolation check if a foreign key constraint has been violated in
+// database.
+func IsForeignKeyViolation(err error) bool {
+	pqerr, ok := err.(*pq.Error)
+	return ok && pqerr.Code == "23503"
 }

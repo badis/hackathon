@@ -6,9 +6,12 @@ POST {{host}}/patients
 Content-Type: application/json
 
 {
-    "firstname": "Badis",
-    "lastname": "Merabet",
-    "email": "badis@turing.com"
+    "firstname": "John",
+    "lastname": "Doe",
+    "email": "john@example.com",
+    "disease_name": "Kiutari",
+    "disease_omimid": "qw12s3ee",
+    "disease_id": 0
 }
 
 ###
@@ -16,7 +19,7 @@ POST {{host}}/login
 Content-Type: application/json
 
 {
-    "email": "badis@turing.com"
+    "email": "john@example.com"
 }
 
 

@@ -8,7 +8,12 @@ import (
 )
 
 type registerPatientInput struct {
-	Firstname, Lastname, Email string
+	Firstname     string `json:"firstname"`
+	Lastname      string `json:"lastname"`
+	Email         string `json:"email"`
+	DiseaseName   string `json:"disease_name"`
+	DiseaseOMIMID string `json:"disease_omimid"`
+	DiseaseID     int64  `json:"disease_id"`
 }
 
 func (h *handler) registerPatient(w http.ResponseWriter, r *http.Request) {
@@ -21,14 +26,14 @@ func (h *handler) registerPatient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.RegisterPatient(r.Context(), in.Firstname, in.Lastname, in.Email)
+	err := h.RegisterPatient(r.Context(), in.Firstname, in.Lastname, in.Email, in.DiseaseName, in.DiseaseOMIMID, in.DiseaseID)
 
 	if err == model.ErrInvalidEmail || err == model.ErrInvalidFirstname || err == model.ErrInvalidLastname {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
-	if err == model.ErrEmailTaken {
+	if err == model.ErrEmailTaken || err == model.ErrDiseaseInserted {
 		http.Error(w, err.Error(), http.StatusConflict)
 		return
 	}

@@ -1,8 +1,8 @@
 CREATE TABLE "diseases" (
   "id" bigserial NOT NULL PRIMARY KEY,
-  "omim_id" varchar NOT NULL,
-  "link_fcbk_group" varchar NOT NULL,
-  "created_at" timestamptz DEFAULT (now())
+  "name" varchar NOT NULL,
+  "omim_id" varchar NOT NULL UNIQUE,
+  "link_fcbk_group" varchar
 );
 
 CREATE TABLE "patients" (
@@ -11,10 +11,8 @@ CREATE TABLE "patients" (
   "lastname" varchar NOT NULL,
   "email" varchar NOT NULL UNIQUE,
   "password" varchar,
-  "disease_id" bigint,
+  "disease_id" bigserial NOT NULL REFERENCES diseases,
   "age" int,
   "created_at" timestamptz DEFAULT (now())
 );
-
-ALTER TABLE "patients" ADD FOREIGN KEY ("disease_id") REFERENCES "diseases" ("id");
 
