@@ -1,0 +1,30 @@
+.ant-layout {
+  background: white;
+  max-width: 85%;
+  margin: 0 auto;
+}
+
+.ant-layout-header {
+  color: #222222;
+  background: #ffffff;
+  line-height: initial;
+  height: auto;
+  padding: 0;
+}
+
+.ant-layout-content {
+  min-height: 120px;
+  color: #222222;
+  background: white;
+  padding: 40px 0;
+}
+
+.ant-layout-sider {
+  color: #222222;
+  background: #ffffff;
+}
+
+.ant-layout-footer {
+  color: #222222;
+  background: #ffffff;
+}

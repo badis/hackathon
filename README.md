@@ -6,6 +6,10 @@ There is strength in numbers in their ability to raise funds, understand the dis
 In this project, you will be creating a web or mobile app for a newly diagnosed patient to register themselves as a patient of the disease in the app. You can pre-load the app with diseases from OMIM or 100 to Things Do at ACHS You must provide some mechanism for allow users enter to a new disease.
 by Margaret Brown patients of the same disease to connect with each other through an in-app notification or links to Facebook groups etc.
 
+<p align="center">
+  <img src='ui/login.png?raw=true' width='70%'>
+</p>
+
 
 ## Installation
 

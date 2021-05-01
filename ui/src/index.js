@@ -1,26 +1,22 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-
-import { BrowserRouter, Router, Switch } from "react-router-dom";
+import { BrowserRouter, Switch } from "react-router-dom";
+import "antd/dist/antd.css";
+import "./index.css";
 
 import History from "./utils/history";
 import Routes from "./routes";
-
 import store from "./redux/store";
-
 import reportWebVitals from "./reportWebVitals";
-import "./index.css";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <Router history={History}>
-          <Switch>
-            <Routes />
-          </Switch>
-        </Router>
+      <BrowserRouter history={History}>
+        <Switch>
+          <Routes />
+        </Switch>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>,
