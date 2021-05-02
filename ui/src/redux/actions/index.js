@@ -5,7 +5,7 @@ import patientApi from "../../api/patientApi";
 
 export const loginPatient = ({ email, password }) => async (dispatch) => {
   try {
-    const res = await patientApi.register({ email, password });
+    const res = await patientApi.login({ email, password });
 
     dispatch({
       type: AUTH_PATIENT,
@@ -21,9 +21,9 @@ export const loginPatient = ({ email, password }) => async (dispatch) => {
   }
 };
 
-export const registerPatient = ({ email, password }) => async (dispatch) => {
+export const registerPatient = (patient) => async (dispatch) => {
   try {
-    const res = await patientApi.register({ email, password });
+    const res = await patientApi.register(patient);
 
     dispatch({
       type: REGISTER_PATIENT,

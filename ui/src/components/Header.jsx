@@ -7,19 +7,30 @@ import logo from "./../logo.png";
 export default () => {
   const { Header } = Layout;
 
+  const token = localStorage.getItem("token");
+
   return (
     <Header>
-      <Link to="/">
-        <img
-          style={{ maxWidth: "552px", width: "100%" }}
-          src={logo}
-          alt="Logo"
-          max-width="552"
-          width="100%"
-        />
-      </Link>
+      <img
+        style={{ maxWidth: "552px", width: "100%" }}
+        src={logo}
+        alt="Logo"
+        max-width="552"
+        width="100%"
+      />
       <br />
-      <Link to="/login">Login</Link> | <Link to="/register">Register</Link>
+
+      {!token ? (
+        <>
+          <Link to="/">Home</Link> | <Link to="/login">Login</Link> |{" "}
+          <Link to="/register">Register</Link>
+        </>
+      ) : (
+        <>
+          <Link to="/">Home</Link> | <Link to="/account">Account</Link> |{" "}
+          <Link to="/logout">Logout</Link>
+        </>
+      )}
       <hr />
     </Header>
   );

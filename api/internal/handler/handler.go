@@ -6,6 +6,7 @@ import (
 
 	"github.com/badis/hackathon/internal/service"
 	"github.com/go-chi/chi/v5"
+	"github.com/rs/cors"
 )
 
 type handler struct {
@@ -24,7 +25,8 @@ func New(s *service.Service) http.Handler {
 
 	api.Get("/", root)
 	api.Post("/login", h.login)
-	api.Post("/patients", h.registerPatient)
+	api.Post("/register", h.registerPatient)
 
-	return api
+	apiWithCors := cors.Default().Handler(api)
+	return apiWithCors
 }

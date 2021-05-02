@@ -8,7 +8,8 @@ import (
 )
 
 type loginInput struct {
-	Email string
+	Email    string
+	Password string
 }
 
 func (h *handler) login(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +22,7 @@ func (h *handler) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	out, err := h.Login(r.Context(), in.Email)
+	out, err := h.Login(r.Context(), in.Email, in.Password)
 
 	if err == model.ErrInvalidEmail {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)

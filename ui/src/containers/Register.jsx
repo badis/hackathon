@@ -1,50 +1,9 @@
 import React, { useState } from "react";
-import {
-  Form,
-  Input,
-  Cascader,
-  Select,
-  Row,
-  Col,
-  Checkbox,
-  Button,
-  AutoComplete,
-} from "antd";
-const { Option } = Select;
-const residences = [
-  {
-    value: "zhejiang",
-    label: "Zhejiang",
-    children: [
-      {
-        value: "hangzhou",
-        label: "Hangzhou",
-        children: [
-          {
-            value: "xihu",
-            label: "West Lake",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: "jiangsu",
-    label: "Jiangsu",
-    children: [
-      {
-        value: "nanjing",
-        label: "Nanjing",
-        children: [
-          {
-            value: "zhonghuamen",
-            label: "Zhong Hua Men",
-          },
-        ],
-      },
-    ],
-  },
-];
+import { Form, Input, Checkbox, Button, AutoComplete, message } from "antd";
+import { useHistory } from "react-router-dom";
+
+import { connect } from "react-redux";
+import { registerPatient } from "../redux/actions";
 
 const formItemLayout = {
   labelCol: {
@@ -88,41 +47,36 @@ const tailFormItemLayout = {
   },
 };
 
-export default () => {
+const Register = (props) => {
   const [form] = Form.useForm();
+  const history = useHistory();
 
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-  };
-
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    </Form.Item>
-  );
-  const [autoCompleteResult, setAutoCompleteResult] = useState([]);
-
-  const onWebsiteChange = (value) => {
-    if (!value) {
-      setAutoCompleteResult([]);
-    } else {
-      setAutoCompleteResult(
-        [".com", ".org", ".net"].map((domain) => `${value}${domain}`),
-      );
+  const onFinish = async (values) => {
+    try {
+      await props.registerPatient(values);
+      message.success("Registration successful !");
+      setTimeout(() => {
+        history.push("/login");
+      }, 2000);
+    } catch (e) {
+      console.log(e);
+      message.error("Registration Failed!");
     }
   };
 
-  const websiteOptions = autoCompleteResult.map((website) => ({
-    label: website,
-    value: website,
+  const [autoCompleteResult, setAutoCompleteResult] = useState([]);
+
+  const onDiseaseChange = (value) => {
+    if (!value) {
+      setAutoCompleteResult([]);
+    }
+  };
+
+  const diseaseOptions = autoCompleteResult.map((disease) => ({
+    label: disease,
+    value: disease,
   }));
+
   return (
     <Form
       {...formItemLayout}
@@ -136,16 +90,42 @@ export default () => {
       scrollToFirstError
     >
       <Form.Item
+        name="firstname"
+        label="First Name"
+        rules={[
+          {
+            required: true,
+            message: "Please input your first name!",
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        name="lastname"
+        label="Last Name"
+        rules={[
+          {
+            required: true,
+            message: "Please input your last name!",
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item
         name="email"
-        label="E-mail"
+        label="Email"
         rules={[
           {
             type: "email",
-            message: "The input is not valid E-mail!",
+            message: "The input is not valid Email!",
           },
           {
             required: true,
-            message: "Please input your E-mail!",
+            message: "Please input your Email!",
           },
         ]}
       >
@@ -193,94 +173,22 @@ export default () => {
       </Form.Item>
 
       <Form.Item
-        name="nickname"
-        label="Nickname"
-        tooltip="What do you want others to call you?"
+        name="disease_name"
+        label="Disease"
         rules={[
           {
             required: true,
-            message: "Please input your nickname!",
-            whitespace: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-
-      <Form.Item
-        name="residence"
-        label="Habitual Residence"
-        rules={[
-          {
-            type: "array",
-            required: true,
-            message: "Please select your habitual residence!",
-          },
-        ]}
-      >
-        <Cascader options={residences} />
-      </Form.Item>
-
-      <Form.Item
-        name="phone"
-        label="Phone Number"
-        rules={[
-          {
-            required: true,
-            message: "Please input your phone number!",
-          },
-        ]}
-      >
-        <Input
-          addonBefore={prefixSelector}
-          style={{
-            width: "100%",
-          }}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="website"
-        label="Website"
-        rules={[
-          {
-            required: true,
-            message: "Please input website!",
+            message: "Please enter the disease you have!",
           },
         ]}
       >
         <AutoComplete
-          options={websiteOptions}
-          onChange={onWebsiteChange}
-          placeholder="website"
+          options={diseaseOptions}
+          onChange={onDiseaseChange}
+          placeholder="disease"
         >
           <Input />
         </AutoComplete>
-      </Form.Item>
-
-      <Form.Item
-        label="Captcha"
-        extra="We must make sure that your are a human."
-      >
-        <Row gutter={8}>
-          <Col span={12}>
-            <Form.Item
-              name="captcha"
-              noStyle
-              rules={[
-                {
-                  required: true,
-                  message: "Please input the captcha you got!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Button>Get captcha</Button>
-          </Col>
-        </Row>
       </Form.Item>
 
       <Form.Item
@@ -296,9 +204,7 @@ export default () => {
         ]}
         {...tailFormItemLayout}
       >
-        <Checkbox>
-          I have read the <a href="">agreement</a>
-        </Checkbox>
+        <Checkbox>I have read the agreement</Checkbox>
       </Form.Item>
       <Form.Item {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit">
@@ -308,3 +214,5 @@ export default () => {
     </Form>
   );
 };
+
+export default connect(null, { registerPatient })(Register);

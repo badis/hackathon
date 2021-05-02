@@ -30,7 +30,7 @@ type LoginOutput struct {
 	} `json:"authPatient"`
 }
 
-func (s *Service) Login(ctx context.Context, email string) (LoginOutput, error) {
+func (s *Service) Login(ctx context.Context, email string, password string) (LoginOutput, error) {
 	var out LoginOutput
 
 	email = strings.TrimSpace(email)
@@ -38,17 +38,24 @@ func (s *Service) Login(ctx context.Context, email string) (LoginOutput, error) 
 		return out, model.ErrInvalidEmail
 	}
 
-	query := "SELECT p.id as id, p.firstname, p.lastname, p.email, p.disease_id, d.name as disease_name, p.created_at " +
+	query := "SELECT p.id as id, p.firstname, p.lastname, p.email, p.password, p.disease_id, d.name as disease_name, p.created_at " +
 		"FROM patients as p INNER JOIN diseases as d ON  p.disease_id = d.id AND p.email = $1"
+
+	var hashedPassword string
 
 	err := s.db.QueryRowContext(ctx, query, email).Scan(
 		&out.AuthPatient.ID,
 		&out.AuthPatient.Firstname,
 		&out.AuthPatient.Lastname,
 		&out.AuthPatient.Email,
+		&hashedPassword,
 		&out.AuthPatient.DiseaseID,
 		&out.AuthPatient.DiseaseName,
 		&out.AuthPatient.CreatedAt)
+
+	if err == sql.ErrNoRows || !model.ComparePassword(hashedPassword, password) {
+		return out, model.ErrPatientNotFound
+	}
 
 	if err == sql.ErrNoRows {
 		return out, model.ErrPatientNotFound

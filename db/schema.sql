@@ -10,7 +10,7 @@ CREATE TABLE "patients" (
   "firstname" varchar NOT NULL,
   "lastname" varchar NOT NULL,
   "email" varchar NOT NULL UNIQUE,
-  "password" varchar,
+  "password" varchar NOT NULL,
   "disease_id" bigserial NOT NULL REFERENCES diseases,
   "age" int,
   "created_at" timestamptz DEFAULT (now())

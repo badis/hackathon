@@ -9,7 +9,7 @@ import (
 )
 
 // RegisterPatient create a patient in database.
-func (s *Service) RegisterPatient(ctx context.Context, firstname, lastname, email, disease_name, disease_omimid string, disease_id int64) error {
+func (s *Service) RegisterPatient(ctx context.Context, firstname, lastname, email, password, disease_name, disease_omimid string, disease_id int64) error {
 
 	firstname = strings.TrimSpace(firstname)
 	if !model.RegExpName.MatchString(firstname) {
@@ -36,8 +36,10 @@ func (s *Service) RegisterPatient(ctx context.Context, firstname, lastname, emai
 		}
 	}
 
-	query := "INSERT INTO patients(firstname, lastname, email, disease_id) VALUES ($1, $2, $3, $4)"
-	_, err = s.db.ExecContext(ctx, query, firstname, lastname, email, disease_id)
+	hashedPassword, _ := model.HashPassword(password)
+
+	query := "INSERT INTO patients(firstname, lastname, email, password, disease_id) VALUES ($1, $2, $3, $4, $5)"
+	_, err = s.db.ExecContext(ctx, query, firstname, lastname, email, hashedPassword, disease_id)
 
 	unique := model.IsUniqueViolation(err)
 

@@ -2,13 +2,14 @@
 @host=http://localhost:5000
 
 ###
-POST {{host}}/patients
+POST {{host}}/register
 Content-Type: application/json
 
 {
     "firstname": "John",
     "lastname": "Doe",
     "email": "john@example.com",
+    "password": "0000",
     "disease_name": "Kiutari",
     "disease_omimid": "qw12s3ee",
     "disease_id": 0
@@ -19,7 +20,8 @@ POST {{host}}/login
 Content-Type: application/json
 
 {
-    "email": "john@example.com"
+    "email": "john@example.com",
+    "password": "0000"
 }
 
 
