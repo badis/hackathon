@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:14-alpine as build-stage
 
 # Create app directory
 WORKDIR /app/
@@ -15,4 +15,16 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-CMD [ "npm", "start"]
+ARG REACT_APP_API_URL
+
+RUN echo $REACT_APP_API_URL  
+RUN npm run build
+
+FROM nginx:alpine
+
+RUN rm -rf /usr/share/nginx/html/*
+COPY ./devops/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --from=build-stage /app/build /usr/share/nginx/html
+
+CMD ["nginx", "-g", "daemon off;"]
+

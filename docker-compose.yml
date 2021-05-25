@@ -1,7 +1,10 @@
 version: "3.9"  # optional since v1.27.0
 services:
   ui:
-    build: ./ui
+    build: 
+      context: ./ui
+      args:
+        - REACT_APP_API_URL=http://localhost:5000
     container_name: frontend
     environment:
       CHOKIDAR_USEPOLLING: "true"
@@ -9,16 +12,25 @@ services:
       - ./ui:/app
       - ui_node_modules:/ui/node_modules
     ports:
-      - "3000:3000"
+      - 3000:80
 
   api:
     build: ./api
     container_name: backend
+    restart: always
     volumes:
       - ./api:/go/src/github.com/badis/hackathon
       - go_modules:/go/pkg/mod
     ports:
-      - "5000:5000"
+      - 5000:5000
+    environment:
+      - API_PORT=5000
+      - DB_USER=admin
+      - DB_PASSWORD=0000
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=hackathon_db
+
     links:
       - db
 
@@ -28,7 +40,7 @@ services:
     volumes:
       - db_pgdata:/var/lib/postgresql/data
     ports:
-      - "5432"
+      - "5432:5432"
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "admin" ]
       timeout: 45s

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/badis/hackathon/internal/handler"
 	"github.com/badis/hackathon/internal/service"
@@ -13,12 +14,21 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 )
 
-const (
-	databaseURL = "postgresql://admin:0000@database:5432/hackathon_db?sslmode=disable"
-	port        = 5000
-)
-
 func main() {
+
+	var (
+		dbUser     = os.Getenv("DB_USER")
+		dbPassword = os.Getenv("DB_PASSWORD")
+		dbHost     = os.Getenv("DB_HOST")
+		dbPort     = os.Getenv("DB_PORT")
+		dbName     = os.Getenv("DB_NAME")
+
+		databaseURL = fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable", dbUser, dbPassword, dbHost, dbPort, dbName)
+		port        = os.Getenv("API_PORT")
+	)
+
+	log.Printf(databaseURL)
+
 	db, err := sql.Open("pgx", databaseURL)
 	if err != nil {
 		log.Fatalf("could not open db connection: %v\n", err)
@@ -38,9 +48,9 @@ func main() {
 
 	h := handler.New(s)
 
-	log.Printf("accepting connections on port: %d\n", port)
+	log.Printf("accepting connections on port: %s\n", port)
 
-	if err = http.ListenAndServe(fmt.Sprintf(":%d", port), h); err != nil {
+	if err = http.ListenAndServe(fmt.Sprintf(":%s", port), h); err != nil {
 		log.Fatalf("could not start server: %v\n", err)
 	}
 }
