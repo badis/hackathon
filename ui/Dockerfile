@@ -15,7 +15,7 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-ARG REACT_APP_API_URL
+# ENV REACT_APP_API_URL=http://apiserver:5000
 
 RUN echo $REACT_APP_API_URL  
 RUN npm run build
