@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hackathon-adminer
+spec:
+  selector:
+    matchLabels:
+      app: hackathon-adminer
+  template:
+    metadata:
+      labels:
+        app: hackathon-adminer
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: hackathon-adminer
+        image: hackathon-adminer-img
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PGADMIN_DEFAULT_EMAIL
+          value: "admin@admin.com"
+        - name: PGADMIN_DEFAULT_PASSWORD
+          value: "admin"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hackathon-adminer-service
+spec:
+  type: ClusterIP
+  selector:
+    app: hackathon-adminer
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080

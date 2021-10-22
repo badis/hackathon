@@ -1,0 +1,53 @@
+apiVersion: skaffold/v2beta10
+kind: Config
+metadata:
+  name: skaffold-hackathon-project
+build:
+  artifacts:
+    - image: hackathon-user-interface-img
+      context: ui/
+      sync:
+        infer:
+        - '**/*.js'
+        - '**/*.jsx'
+        - '**/*.ts'
+        - '**/*.tsx'
+        - '**/*.css'
+      docker:
+        dockerfile: Dockerfile
+    - image: hackathon-backend-img
+      context: api/
+      sync:
+        infer:
+        - '**/*.go'
+      docker:
+        dockerfile: Dockerfile
+    - image: hackathon-adminer-img
+      context: adminer/
+    - image: hackathon-postgres-img
+      context: db/
+  tagPolicy:
+    sha256: {}
+
+deploy:
+  kubectl:
+    manifests:
+    - k8s/user-interface.yaml
+    - k8s/backend.yaml
+    - k8s/adminer.yaml
+    - k8s/postgres-configmap.yaml
+    - k8s/postgres-secret.yaml
+    - k8s/postgres.yaml
+portForward:
+- resourceType: service
+  resourceName: hackathon-user-interface-service
+  port: 3000
+- resourceType: deployment
+  resourceName: hackathon-backend
+  port: 5000
+- resourceType: deployment
+  resourceName: hackathon-adminer
+  port: 8080
+- resourceType: deployment
+  resourceName: hackathon-postgres
+  port: 5432

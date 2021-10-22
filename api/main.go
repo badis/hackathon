@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/badis/hackathon/internal/handler"
 	"github.com/badis/hackathon/internal/service"
@@ -13,9 +14,13 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 )
 
-const (
-	databaseURL = "postgresql://admin:0000@database:5432/hackathon_db?sslmode=disable"
-	port        = 5000
+var (
+	dbuser      = os.Getenv("POSTGRES_USER")
+	dbpassword  = os.Getenv("POSTGRES_PASSWORD")
+	dbname      = os.Getenv("POSTGRES_DB")
+	dbhost      = os.Getenv("POSTGRES_ADDR")
+	databaseURL = fmt.Sprintf("postgresql://%s:%s@%s/%s?sslmode=disable", dbuser, dbpassword, dbhost, dbname)
+	port        = os.Getenv("PORT")
 )
 
 func main() {
@@ -27,10 +32,10 @@ func main() {
 
 	defer db.Close()
 
-	if err = db.Ping(); err != nil {
+	/* if err = db.Ping(); err != nil {
 		log.Fatalf("could not ping to db : %v\n", err)
-		return
-	}
+		// return
+	}*/
 
 	codec := branca.NewBranca("supersecretkeysupersecretkeysupe")
 
@@ -38,9 +43,9 @@ func main() {
 
 	h := handler.New(s)
 
-	log.Printf("accepting connections on port: %d\n", port)
+	log.Printf("accepting connections on port: %s\n", port)
 
-	if err = http.ListenAndServe(fmt.Sprintf(":%d", port), h); err != nil {
+	if err = http.ListenAndServe(fmt.Sprintf("%s:%s", "0.0.0.0", port), h); err != nil {
 		log.Fatalf("could not start server: %v\n", err)
 	}
 }

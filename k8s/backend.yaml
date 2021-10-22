@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hackathon-backend
+spec:
+  selector:
+    matchLabels:
+      app: hackathon-backend
+  template:
+    metadata:
+      labels:
+        app: hackathon-backend
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: hackathon-backend
+        image: hackathon-backend-img
+        ports:
+        - containerPort: 5000
+
+        env:
+          - name: PORT
+            value: "5000"
+          - name: POSTGRES_ADDR
+            value: "postgres:5432"
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: postgres-user
+          - name: POSTGRES_PASSWORD
+            valueFrom: 
+              secretKeyRef:
+                name: postgres-secret
+                key: postgres-password
+          - name: POSTGRES_DB
+            valueFrom: 
+              configMapKeyRef:
+                name: postgres-configmap
+                key: postgres-db  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hackathon-backend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: hackathon-backend
+  ports:
+  - name: http
+    port: 5000
+    targetPort: 5000
